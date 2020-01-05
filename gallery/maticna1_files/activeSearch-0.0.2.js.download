@@ -1,0 +1,202 @@
+function initSearch() {
+    var minSearchLength = 3;
+    var searchDelay = 200;
+    var loadingClass = "loading";
+    var keyCodes = {
+        BACKSPACE: 8,
+        CAPS_LOCK: 20,
+        COMMA: 188,
+        CONTROL: 17,
+        DELETE: 46,
+        DOWN: 40,
+        END: 35,
+        ENTER: 13,
+        ESCAPE: 27,
+        HOME: 36,
+        INSERT: 45,
+        LEFT: 37,
+        NUMPAD_ADD: 107,
+        NUMPAD_DECIMAL: 110,
+        NUMPAD_DIVIDE: 111,
+        NUMPAD_ENTER: 108,
+        NUMPAD_MULTIPLY: 106,
+        NUMPAD_SUBTRACT: 109,
+        PAGE_DOWN: 34,
+        PAGE_UP: 33,
+        PERIOD: 190,
+        RIGHT: 39,
+        SHIFT: 16,
+        SPACE: 32,
+        TAB: 9,
+        UP: 38
+    }
+    var searchTimer = false;
+    var closeTimer = false;
+    var activeSearches = 0;
+    var lastValue = '';
+    var activeResult = false;
+    var resultsOpen = false;
+    var searchInput = $('#searchInput');
+    searchInput.attr("autocomplete", "off");
+    var searchUrl = searchInput.closest("form").attr("action");
+    var searchResult = searchInput.siblings(".searchResults");
+    var searchLabel = $('.searchpart label.over');
+    if (searchInput.val() != '') {
+        searchLabel.css({
+            display: 'none'
+        });
+    }
+    searchInput.focus(function () {
+        if (lastValue) showResults();
+        searchLabel.css({
+            display: 'none'
+        });
+    });
+    searchInput.blur(function () {
+        closeResults();
+    });
+    searchInput.bind("keypress", function (event) {
+        switch (event.keyCode) {
+            case keyCodes.UP:
+                focusUp();
+                break;
+            case keyCodes.DOWN:
+                focusDown();
+                break;
+            case keyCodes.ENTER:
+                if (resultsOpen) event.preventDefault();
+                if (activeResult) {
+                    document.location.href = activeResult.find('a').eq(0).attr("href");
+                } else {
+                    searchInput.closest("form").submit();
+                }
+                break;
+            case keyCodes.TAB:
+                if (resultsOpen) event.preventDefault();
+                focusDown();
+                break;
+            case keyCodes.ESCAPE:
+                closeResults();
+                break;
+            default:
+                setTimeout(executeSearch, 10);
+                break;
+        }
+    });
+    $(".search .searchResults .resultsList li").live("mouseover", function () {
+        activateResult(this);
+    });
+    $(".search .searchResults a[rel=ajaxify]").live("click", function (e) {
+        if (closeTimer) clearTimeout(closeTimer);
+        e.preventDefault();
+        searchResult.load($(this).attr("href"));
+        showResults();
+        searchInput.focus();
+    });
+    $(".search .searchResults a[rel=didyoumean]").live("click", function (e) {
+        if (closeTimer) clearTimeout(closeTimer);
+        e.preventDefault();
+        searchInput.val(searchResult.find("span.didyoumean_query").html());
+        executeSearch();
+        searchInput.focus();
+    });
+    searchResult.click(function () {
+        if (closeTimer) clearTimeout(closeTimer);
+        searchInput.focus();
+    });
+
+    function executeSearch() {
+        var val = jQuery.trim(searchInput.val());
+        if (val.length < minSearchLength) {
+            return false;
+        }
+        if (lastValue == val) {
+            return false;
+        }
+        if (!activeSearches && !searchTimer) startSearch(val);
+        else setSearchTimeout(val);
+    }
+
+    function setSearchTimeout(val) {
+        if (searchTimer) clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+            searchTimer = false;
+            startSearch(val);
+        }, searchDelay);
+    }
+    var rn = 0;
+    var ln = 0;
+
+    function startSearch(val) {
+        var cn = rn++;
+        searchInput.closest('div').addClass(loadingClass);
+        lastValue = val;
+        activeSearches++;
+        $.get(searchUrl, {
+            upit: val
+        }, function (data, textStatus) {
+            if (cn < ln) return;
+            ln = cn;
+            displayResults(data, textStatus);
+        }, 'html');
+    }
+
+    function displayResults(data, textStatus) {
+        activeSearches--;
+        activeResult = false;
+        if (!activeSearches && !searchTimer) searchInput.closest('div').removeClass(loadingClass);
+        searchResult.html(data);
+        showResults();
+    }
+
+    function showResults() {
+        resultsOpen = true;
+        searchResult.show();
+    }
+
+    function closeResults() {
+        resultsOpen = false;
+        closeTimer = setTimeout(function () {
+            searchResult.hide();
+            if (searchInput.val() != '') return;
+            searchLabel.css({
+                display: ''
+            });
+        }, 500);
+    }
+
+    function activateResult(resultItem) {
+        if (activeResult) deactivateResult();
+        activeResult = $(resultItem).addClass("selected");
+    }
+
+    function deactivateResult() {
+        activeResult.removeClass("selected");
+    }
+
+    function focusUp() {
+        if (!resultsOpen) return false;
+        if (!activeResult) {
+            activateResult(searchResult.find(".resultsList li:last"));
+            return;
+        }
+        var prev = activeResult.prev()[0];
+        if (!prev) {
+            prev = searchResult.find(".resultsList li:last");
+        }
+        activateResult(prev);
+    }
+
+    function focusDown() {
+        if (!resultsOpen) return false;
+        if (!activeResult) {
+            activateResult(searchResult.find(".resultsList li:first"));
+            return;
+        }
+        var next = activeResult.next()[0];
+        if (!next) {
+            next = searchResult.find(".resultsList li:first");
+        }
+        activateResult(next);
+    }
+}

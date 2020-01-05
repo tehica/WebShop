@@ -1,0 +1,726 @@
+if ($(window).width() < 769) {
+    $('.megaokvir').addClass('sakriveni');
+    $('.theme_menu').addClass('dropdown');
+    $('.mobile-search-button').on('click', function () {
+        $('#mobile-serach').toggle();
+        $('ul.theme_menu.cats.gore.floating-submenu.dropdown').removeClass('active visible');
+    });
+    $('.mobile-menu').on('click', function () {
+        $('#mobile-serach').hide();
+    });
+} else {
+    $('div.megaokvir.sakriveni').on('mouseover', function () {
+        $('div.megaokvir.sakriveni').find('button.open_menu.proizvodi').addClass('active');
+        $('div.megaokvir.sakriveni').find('ul.dropdown').addClass('active visible');
+    });
+    $('div.megaokvir.sakriveni').on('mouseleave', function () {
+        $('div.megaokvir.sakriveni').find('button.open_menu.proizvodi').removeClass('active');
+        $('div.megaokvir.sakriveni').find('ul.dropdown').removeClass('active visible');
+    });
+    $(window).scroll(function () {
+        var scroll = $(window).scrollTop();
+        if (scroll >= 500 || (scroll >= 150 && WebUrl !== window.location.href)) {
+            $(".header-wrap").addClass("floating bgwhite");
+			$(".footersticky").addClass("pokazi");
+			$(".headerbg").addClass("hide");
+        } else {
+            $(".header-wrap").removeClass("floating bgwhite");
+			$(".footersticky").removeClass("pokazi");
+			$(".headerbg").removeClass("hide");
+        }
+    });
+} 
+
+var Core = (function(Core) {
+    "use strict";
+
+    Core = {
+
+        /**
+         ** static constants
+         **/
+        ANIMATIONEND: "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+        TRANSITIONEND: "webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+        ISTOUCH: $('html').hasClass('md_touch'),
+        TRANSITIONSUPPORTED: $('html').hasClass('md_csstransitions'),
+        XHRLEVEL2: !!window.FormData,
+
+        /**
+         ** initialize after DOM has been loaded
+         **/
+        afterDOMReady: function() {
+
+
+            this.responsiveSideMegaMenu.init();
+            this.responsiveTopBar.init();
+
+            this.events.sellerInfoDropdown();
+
+        },
+
+        /**
+         ** initialize after all images, scripts, etc. have been loaded
+         **/
+        afterWindowLoaded: function() {
+
+            this.animatedContent();
+            this.mainAnimation.init();
+
+            var addthis_config = addthis_config || {};
+            addthis_config.pubid = 'xa-5306f8f674bfda4c';
+
+        },
+
+        /**
+         ** extends jQuery by own mini plugins
+         **/
+        extend: function() {
+
+            $.fn.extend({
+
+
+
+                /**
+                 **	Call function after window resize and delay
+                 **	@param fn - function that will be called
+                 **	@param delay - Delay, after which function will be called
+                 **	@param namepsace - namespace for event
+                 **/
+                afterResize: function(fn, delay, namespace) {
+
+                    var ns = namespace || "";
+
+                    return this.each(function() {
+
+                        $(this).on('resize' + ns, function() {
+
+                            setTimeout(function() {
+                                fn();
+                            }, delay);
+
+                        });
+
+                    });
+
+
+                },
+
+                /**
+                 **	Accordion plugin
+                 **	@param toggle - set to true, if need to be toggle
+                 **	@return jQuery
+                 **/
+                accordion: function(toggle) {
+
+                    return this.each(function() {
+
+                        var $this = $(this),
+                            active = $this.children('dt.active').length ? $this.children('dt.active') : $this.children('dt:first').addClass('active');
+
+                        $this.children('dt').not(active).next().hide();
+
+                        $this.on('click', 'dt', function() {
+
+                            if (!toggle) {
+                                $(this).addClass('active')
+                                    .siblings('dt')
+                                    .removeClass('active')
+                                    .end()
+                                    .next('dd')
+                                    .stop()
+                                    .slideDown(300)
+                                    .siblings('dd')
+                                    .stop()
+                                    .slideUp(300);
+                            } else {
+                                $(this).toggleClass('active').next().stop().slideToggle();
+                            }
+
+                        });
+
+                    });
+
+                }
+
+            });
+
+        },
+
+
+
+        /**
+         **	Generate rel attribute from valid data-rel attribute
+         **/
+        fancyboxValidationFix: function() {
+
+            var fb = $('[class*="fancybox_item"]');
+
+            if (!fb.length) return;
+
+            fb.each(function() {
+
+                $(this).attr('rel', $(this).data('rel'));
+
+            });
+
+        },
+
+        /**
+         **	Handling animation when page has been scrolled
+         **/
+        animatedContent: function() {
+
+            $("[data-animation]").each(function() {
+
+                var self = $(this);
+
+                if ($(window).width() > 6767) {
+
+                    self.appear(function() {
+
+                        var delay = (self.attr("data-animation-delay") ? self.attr("data-animation-delay") : 1);
+
+                        if (delay > 1) self.css("animation-delay", delay + "ms");
+                        self.removeClass('transparent').addClass("visible " + self.attr("data-animation"));
+
+                    }, {
+                        accX: 0,
+                        accY: -250
+                    });
+
+                } else {
+
+                    self.removeClass("transparent").addClass("visible");
+
+                }
+
+            });
+
+        },
+
+        /**
+         ** handling main animation of theme
+         **/
+        mainAnimation: {
+
+            container: $('.dropdown'),
+
+            init: function() {
+
+                this.prepareEachDropdown();
+                this.bindEvents();
+
+            },
+
+            prepareDropdown: function() {
+
+                var self = Core.mainAnimation;
+
+                var $this = $(this),
+                    hasDropdown = $this.find('.dropdown').length ? 'children' : 'find';
+
+                $this.data("fn", hasDropdown);
+
+                var items = $this[$this.data('fn')]('.animated_item'),
+                    len = items.length;
+
+                $this.data("len", len);
+
+                self.defaultState($this);
+
+                if (Core.TRANSITIONSUPPORTED) {
+
+                    items.children('a').on(Core.TRANSITIONEND, function(event) {
+
+                        event.stopPropagation();
+
+                    });
+
+                    items.eq(0).on(Core.TRANSITIONEND, function(event) {
+
+
+
+                        if ($this.hasClass("active") || event.originalEvent.propertyName !== "transform" || !event.target.classList.contains("animated_item")) return false;
+                        self.defineNewState($this);
+                        $this.removeClass("visible");
+
+                    });
+
+                    items.eq($this.data("len") - 1).on(Core.TRANSITIONEND, function() {
+
+                        if (!$this.hasClass("active")) return false;
+                        self.defineNewState($this, true);
+
+                    });
+
+                }
+
+            },
+
+            prepareEachDropdown: function() {
+
+                var self = this;
+                self.container.each(self.prepareDropdown);
+
+            },
+
+            bindEvents: function() {
+
+                $('body').on('click.sakriveni', '[class*="open_"]', function(event) { /* dropdown */
+
+                    $(this).add($(this).next()).toggleClass('active');
+
+                    if (Core.TRANSITIONSUPPORTED) {
+                        $(this).next().toggleClass("visible");
+                    } else {
+                        $(this).next().toggleClass('visible');
+                    }
+
+                });
+
+            },
+
+            defineNewState: function(container, reverse) {
+
+                container.addClass(container.data('fn'));
+
+                if (reverse) {
+
+                    var len = container.data("len"),
+                        items = container[container.data('fn')]('.animated_item');
+
+                    for (var i = len, j = 0; i >= 0, j < len; i--, j++) {
+                        items.eq(j).attr('style', 'transition-delay:' + i / 1000 + 's');
+                    }
+
+                } else {
+
+                    this.defaultState(container);
+
+                }
+
+            },
+
+            defaultState: function(container) {
+
+                var items = container[container.data('fn')]('.animated_item');
+
+                items.each(function(i) {
+
+                    $(this).attr('style', 'transition-delay:' + (i + 1) / 1000 + 's');
+
+                });
+
+            }
+
+        },
+
+        /**
+         ** store small events
+         **/
+        events: {
+
+            closeButton: function() {
+
+                $('body').on('click.close_button', '.close', function() {
+
+                    $(this).parent().animate({
+
+                        opacity: 0
+
+                    }, function() {
+
+                        /* shopping cart addition*/
+                        var $this = $(this),
+                            ISSC = $this.closest('.shopping_cart').length,
+                            collection = $this.parent().index() != 0 && ISSC ?
+                            $this.add($this.parent()) : $this;
+                        /* end shopping cart addition*/
+
+                        collection.slideUp(function() {
+
+                            if (!ISSC) return;
+
+                            var parent = $(this).closest('.shopping_cart'),
+                                len;
+
+                            $(this).remove();
+
+                            len = parent.find('.animated_item').length;
+                            parent.data("len", len);
+
+                            Core.mainAnimation.defineNewState(parent, true);
+
+                        });
+
+                    });
+
+                });
+
+            },
+
+
+
+
+            /**
+             **	Reset filter
+             **/
+            resetFilter: function() {
+
+                if (!window.startRangeValues) return;
+
+                var startValues = window.startRangeValues,
+                    min = startValues[0].toFixed(2),
+                    max = startValues[1].toFixed(2);
+
+                $('.filter_reset').on('click', function() {
+
+                    var form = $(this).closest('form'),
+                        range = form.find('.range');
+
+                    console.log(startValues);
+
+                    // form.find('#slider').slider('option','values', startValues);
+
+                    form.find('#slider').slider('values', 0, min);
+                    form.find('#slider').slider('values', 1, max);
+
+                    form.find('.options_list').children().eq(0).children().trigger('click');
+
+                    range.children('.min_value').val(min).next().val(max);
+
+                    range.children('.min_val').text('$' + min).next().text('$' + max);
+
+                });
+
+            },
+
+            sellerInfoDropdown: function() {
+
+                $('.seller_info_wrap').on('click', '.seller_name', function() {
+
+                    $(this).next('.seller_info_dropdown').fadeToggle();
+
+                });
+
+            },
+
+
+        },
+
+
+
+        responsiveTopBar: {
+
+            /**
+             **	initialize events for the responsive version of mega menu in the side menu
+             **/
+            init: function() {
+
+                this.container = $('#header').find('.topbar');
+                this.menu = this.container.find('.submenu');
+
+                this.createResponsiveButton(this.container);
+
+                this.checkViewPort();
+
+                $(window).afterResize(this.checkViewPort.bind(this), 300);
+
+            },
+
+            /**
+             ** activated the desired handler relative to window size
+             **/
+            checkViewPort: function() {
+
+                var wW = $(window).width();
+
+                // landscape
+                if (wW > 767 && wW < 1192) {
+                    this.activateTablet();
+                }
+                // mobile && portrait
+                else if (wW <= 767) {
+                    this.activateMobile();
+                }
+                // desktop
+                else {
+                    this.deactivateResponsive();
+                }
+
+            },
+
+            /**
+             **	Reset tablet handler and add mobile handler
+             **/
+            activateMobile: function() {
+
+                this.deactivateResponsive();
+
+                this.menu.add(this.container).hide();
+
+                this.menu.parent().off('click.tablet').on('click.mobile', this.mobileHandler);
+
+            },
+
+            /**
+             **	Reset mobile handler and add tablet handler
+             **/
+            activateTablet: function() {
+
+                this.deactivateResponsive();
+
+                this.menu.parent().off('click.mobile').on('click.tablet', this.tabletHandler);
+
+            },
+
+            /**
+             **	Reset all handlers and return default state
+             **/
+            deactivateResponsive: function() {
+
+                $('.tb_toggle_menu').removeClass('active');
+
+                this.container.add(this.menu).show();
+
+                this.menu.parent().removeClass('tablet_active mobile_active');
+
+                this.container.find('.prevented').removeClass('prevented');
+
+                this.menu.parent().off('click.mobile click.tablet');
+
+            },
+
+            /**
+             ** Mobile handler
+             ** @param event - event handler
+             **/
+            mobileHandler: function(event) {
+
+                var link = $(this).children('a'),
+                    menu = $(this).children('.mega_menu, .submenu');
+
+                if (!link.hasClass('prevented') && menu.length) {
+
+                    link.addClass('prevented');
+
+                    menu.stop().slideDown();
+
+                    $(this).addClass('mobile_active').siblings().removeClass('mobile_active').children('a').removeClass('prevented').next().stop().slideUp();
+
+                    event.preventDefault();
+
+                }
+
+            },
+
+            /**
+             ** Tablet handler
+             ** @param event - event handler
+             **/
+            tabletHandler: function(event) {
+
+                var link = $(this).children('a'),
+                    menu = $(this).children('.mega_menu, .submenu');
+
+                if (!link.hasClass('prevented') && menu.length) {
+
+                    link.addClass('prevented');
+
+                    $(this).addClass('tablet_active').siblings().removeClass('tablet_active').children('a').removeClass('prevented');
+
+                    event.preventDefault();
+
+                }
+
+            },
+
+            /**
+             ** Create button for main navigation
+             **/
+            createResponsiveButton: function(container) {
+
+                var el = $('<button></button>', {
+                    class: 'tb_toggle_menu'
+                }).insertBefore(container);
+
+                el.on('click.responsiveButton', function() {
+
+                    $(this).toggleClass('active').next().slideToggle();
+
+                });
+
+            }
+
+        },
+
+        responsiveSideMegaMenu: {
+
+            /**
+             **	initialize events for the responsive version of mega menu in the side menu
+             **/
+            init: function() {
+
+                this.menu = $('.mega_menu, .submenu');
+
+                this.menu.data('in_main_nav', this.menu.closest('.main_navigation').length ? true : false);
+
+                this.createResponsiveButton();
+
+                this.checkViewPort();
+
+                $(window).afterResize(this.checkViewPort.bind(this), 300);
+
+            },
+
+            /**
+             ** activated the desired handler relative to window size
+             **/
+            checkViewPort: function() {
+
+                var wW = $(window).width();
+
+                // landscape
+                if (wW > 991 && wW < 1400 && Core.ISTOUCH) {
+                    this.activateTablet();
+                }
+                // mobile && portrait
+                else if (wW <= 991) {
+                    this.activateMobile();
+                }
+                // desktop
+                else {
+                    this.deactivateResponsive();
+                }
+
+            },
+
+            /**
+             **	Reset tablet handler and add mobile handler
+             **/
+            activateMobile: function() {
+
+                this.deactivateResponsive();
+
+                this.menu.add($('.main_navigation')).hide();
+
+                this.menu.parent().children('a').off('click.tablet').on('click.mobile', this.mobileHandler);
+
+            },
+
+            /**
+             **	Reset mobile handler and add tablet handler
+             **/
+            activateTablet: function() {
+
+                this.deactivateResponsive();
+
+                this.menu.parent().children('a').off('click.mobile').on('click.tablet', this.tabletHandler);
+
+            },
+
+            /**
+             **	Reset all handlers and return default state
+             **/
+            deactivateResponsive: function() {
+
+                $('.toggle_menu').removeClass('active');
+
+                this.menu.add($('.main_navigation')).show();
+
+                this.menu.parent().removeClass('tablet_active mobile_active');
+
+                this.menu.siblings('.prevented').removeClass('prevented');
+
+                this.menu.parent().children('a').off('click.mobile click.tablet');
+
+            },
+
+            /**
+             ** Mobile handler
+             ** @param event - event handler
+             **/
+            mobileHandler: function(event) {
+
+                var link = $(this),
+                    menu = link.next('.mega_menu, .submenu');
+
+                if (!link.hasClass('prevented') && menu.length) {
+
+                    link.addClass('prevented');
+
+                    menu.stop().slideDown();
+
+                    $(this).parent().addClass('mobile_active').siblings().removeClass('mobile_active').children('a').removeClass('prevented').next().stop().slideUp();
+
+                    event.preventDefault();
+
+                } else if (link.hasClass('prevented') && menu.length) {
+
+                    link.removeClass('prevented');
+
+                    link.parent().removeClass('mobile_active').children('a').next().stop().slideUp();
+
+                    event.preventDefault();
+
+                }
+
+            },
+
+            /**
+             ** Tablet handler
+             ** @param event - event handler
+             **/
+            tabletHandler: function(event) {
+
+                var link = $(this),
+                    menu = link.next('.mega_menu, .submenu');
+
+                if (!link.hasClass('prevented') && menu.length) {
+
+                    link.addClass('prevented');
+
+                    $(this).parent().addClass('tablet_active').siblings().removeClass('tablet_active').children('a').removeClass('prevented');
+
+                    event.preventDefault();
+
+                }
+
+            },
+
+            /**
+             ** Create button for main navigation
+             **/
+            createResponsiveButton: function() {
+
+                var el = $('<button></button>', {
+                    class: 'toggle_menu'
+                }).insertBefore($('.main_navigation'));
+
+                el.on('click.responsiveButton', function() {
+
+                    $(this).toggleClass('active').next().slideToggle();
+
+                });
+
+            }
+
+        }
+
+
+
+    };
+
+    Core.extend();
+
+    $(document).ready(function() {
+        Core.afterDOMReady();
+    });
+
+    $(window).load(function() {
+        Core.afterWindowLoaded();
+    });
+
+    return Core;
+
+}(Core || {}));

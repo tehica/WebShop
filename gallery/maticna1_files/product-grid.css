@@ -1,0 +1,691 @@
+/* GRID */
+
+.product-cell {
+	position: relative;
+	text-align: left;
+	width: 100%;
+}
+.product-cell .product {
+	display: inline-block;
+	margin: 0 auto;
+
+	overflow: hidden;
+	position: relative;
+	width: 99%;
+	margin: 0 0px 15px 0;
+	border: #CCC 1px solid;
+	padding: 10px;
+	text-align: left;
+}
+
+.product-cell .product:hover {
+	/*box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);*/
+}
+
+ .product-cell .indextab:nth-child(4n+4) {
+ margin: 0 0px 12px 0!Important;
+}
+ .product-cell .indexother:nth-child(5n+5) {
+ margin: 0 0px 12px 0!Important;
+}
+ .product-cell .gridshow:nth-child(3n+3) {
+ /*margin: 0 0px 15px 0!Important;*/
+}
+ .product-cell .pagesearch:nth-child(4n+4) {
+ /*margin: 0 0px 15px 0!Important;*/
+}
+ @media (min-width: 1025px) {
+ .product-cell .relacija {
+/*	max-width: 199px!important;*/
+	max-width: 22.664%!Important;
+}
+ .product-cell .indextab {
+	/*max-width: 212px!important;*/
+	max-width: 18.664%!Important;
+ margin: 0 12px 12px 0!Important;
+}
+ .product-cell .indexother {
+	/*max-width: 212px!important;*/
+	max-width: 18.664%!Important;
+ margin: 0 15px 12px 0!Important;
+}
+ .product-cell .pagesearch {
+ max-width: 23.664%!Important;  /* VELICINA PRIKAZA 4 U REDU */
+}
+}
+ @media (max-width: 1024px) {
+.product-cell .indextab {
+ max-width: 18%!Important;
+ margin: 0 15px 12px 0!Important;
+}
+ .product-cell .indexother {
+ max-width: 18%!Important;
+ margin: 0 15px 12px 0!Important;
+}
+ .product-cell .relacija {
+ max-width: 21.664%!Important;
+}
+ .product-cell .gridshow {
+/* max-width: 30.664%!Important;*/ /* VELICINA PRIKAZA 3 U REDU */
+}
+ .product-cell .pagesearch {
+ max-width: 22.664%!Important;  /* VELICINA PRIKAZA 4 U REDU */
+}
+}
+ @media (max-width: 768px) {
+.product-cell .indextab {
+ max-width: 17.66%!Important;
+ margin: 0 15px 12px 0!Important;
+}
+ .product-cell .indexother {
+ max-width: 17.664%!Important;
+ margin: 0 15px 12px 0!Important;
+}
+}
+ @media only screen and (max-width: 600px) {
+ .product-cell .indextab {
+ max-width: 100%!important;
+ margin: 0 0px 12px 0!Important;
+}
+.product-cell .indexother {
+ max-width: 272px!important;
+ margin: 0 0px 12px 0!Important;
+}
+.product-cell .relacija {
+ max-width: 272px!important;
+}
+ .product-cell .gridshow {
+ max-width: 100%!important;
+}
+ .product-cell .pagesearch {
+ max-width: 100%!important;
+}
+}
+ @media only screen and (max-width: 480px) {
+ .product-cell .indextab {
+ max-width: 260px!important;
+ margin: 0 0px 12px 0!Important;
+}
+.product-cell .indexother {
+ max-width: 260px!important;
+ margin: 0 0px 12px 0!Important;
+}
+.product-cell .relacija {
+ max-width: 260px!important;
+}
+ .product-cell .gridshow {
+ max-width: 100%!important;
+}
+ .product-cell .pagesearch {
+ max-width: 100%!important;
+}
+}
+.product-cell .product a {
+	display: block;	
+	width: 100%;	
+}
+.product-cell .product img {
+	width: 100%;
+	z-index: 1;
+}
+.product-cell .product:hover {
+/*  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
+}
+.product-cell .product:hover .product-sale-time {
+	opacity: 1;
+	visibility: visible;
+}
+.product-cell .product:hover .product-info {
+/*	border-color: #2799d1;
+	bottom: 0;*/
+}
+.product-cell .product:hover .product-info .product-shopping-cart {
+/*   background-color: #fff;*/
+}
+.product-cell .product:hover .product-info .product-shopping-cart i {
+/*   color: #2799d1;*/
+}
+.product-cell .product .product-info-height {
+
+}
+.product-cell .product .product-info {
+	width: 100%;
+	z-index: 5;
+}
+
+.product-cell .product .product-info .product-shopping-cart {text-align: center; margin-left: 25%; margin-top: 15px;}
+
+.product-cell .product .product-info .product-shopping-cart .ikona {
+	float: left;
+	line-height: 34px;
+	display: block;
+	width: 50px;
+	background-color: #101c2f;
+	/*-webkit-transform: skew(-20deg); -moz-transform: skew(-20deg); -o-transform: skew(-20deg);*/
+	transform: skew(-20deg, 0deg); -ms-transform: skew(-20deg, 0deg); -webkit-transform: skew(-20deg, 0deg); display:inline-block;
+	font-size: 24px;
+	text-align: center;
+	text-decoration: none;
+	z-index: 5;/*	border: #2799d1 3px solid;*/
+	padding: 0;
+	margin: 0;
+}
+
+.product-cell .product .product-info .product-shopping-cart .kupi {
+	background-color: #2799d1;
+	color: #FFF;
+	font-size: 14px;
+	padding: 0 20px;
+	line-height: 34px;
+	float: left;
+	margin-left: -1px;	
+	/*-webkit-transform: skew(-20deg); -moz-transform: skew(-20deg); -o-transform: skew(-20deg);*/
+	transform: skew(-20deg, 0deg); -ms-transform: skew(-20deg, 0deg); -webkit-transform: skew(-20deg, 0deg);
+}
+
+.product-cell .product .product-info .product-shopping-cart .kupi > * {
+	/*display: inline-block; webkit-transform: skew(20deg); -moz-transform: skew(20deg); -o-transform: skew(20deg);*/
+	transform: skew(20deg, 0deg); -ms-transform: skew(20deg, 0deg); -webkit-transform: skew(20deg, 0deg);
+}
+
+.product-cell .product .product-info .product-shopping-cart:hover .ikona {
+	background-color: #2799d1;
+}
+
+.product-cell .product .product-info .product-shopping-cart:hover .kupi {
+	background-color: #101c2f;
+}
+
+.product-cell .product .product-info .product-shopping-cart .ikona i {
+	-webkit-transform: skew(20deg); -moz-transform: skew(20deg); -o-transform: skew(20deg);
+}
+
+.product-cell .empty {
+	display: block;
+	color: #FFF;
+	font-size: 14px;
+	padding: 0 20px;
+	height: 39px;
+	float: left;
+	margin-left: -1px;	
+}
+
+.pl30 {
+	left: 30%!Important;
+}
+.pl20 {
+	left: 20%!Important;
+}
+.product-cell .product .product-info .product-shopping-cart:hover {
+	/*background-color: #2799d1;*/
+}
+.product-cell .product .product-info .product-shopping-cart:hover i {
+	color: #fff;
+}
+.product-cell .product .product-info .product-shopping-cart i {
+	color: #fff;
+}
+.product-cell .product .product-info .discount-shopping-cart {
+	background-color: #2799d1;
+	border-radius: 35px 35px 35px 35px !important;
+	display: block;
+	font-size: 18px;
+	height: 50px;
+	left: 70%;
+	line-height: 50px;
+	margin-left: -30px;
+	position: absolute;
+	text-align: center;
+	text-decoration: none;
+	top: -25px;
+	width: 50px;
+	z-index: 5;/*	border: #2799d1 3px solid;*/
+	color: #FFF;
+}
+.product-cell .product .product-info .discount-shopping-cart:hover {
+	background-color: #2d2d2d;
+}
+.product-cell .product .product-info .product-price {
+	color: #2799d1;
+	font-size: 16px;
+	font-weight: 700;
+	margin: 0;
+	padding-bottom: 5px;
+	float: left;
+}
+.product-cell .product .product-info .product-price span {
+	color: #666666;
+	font-size: 12px;
+	text-decoration: line-through;
+}
+
+.product-cell .product .product-info .oldprice {
+	text-decoration: line-through;
+	float: right;
+}
+
+.product-cell .product .product-info .product-add {
+	color: #001539;
+	font-size: 13px;
+	text-decoration: none;
+}
+.product-cell .product .product-info h4, .product-cell .product .product-info h2 {
+	margin: 7px 0 7px;
+	font-size: 12px;
+	color: #666;
+	height: 62px;
+	overflow: hidden;
+	line-height: 20px;
+}
+.product-cell .label {
+	height: 90px;
+	position: absolute;
+	width: 91px;
+	z-index: 9;
+	background-attachment: scroll;
+	background-color: transparent;
+	background-image: url(../template/standard/label.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+}
+.product-cell .novo {
+	background-position: 0px 0;
+	right: -1px;
+	top: -1px;
+}
+.product-cell .akcija {
+	background-color: transparent;
+	background-image: url(../template/standard/akcija2.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	top: 0px;
+	left: 30%;
+}
+.product-cell .lista .akcija {
+	background-color: transparent;
+	background-image: url(../template/standard/akcija2.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	top: 0px;
+	left: 20px;
+}
+.product-cell .izdvajamo {
+	background-position: 0px -183px;
+	right: -1px;
+	top: -1px;
+}
+
+.product-cell .dostava {
+	height: 29px;
+	position: absolute;
+	width: 102px;
+	z-index: 9;
+	background-attachment: scroll;
+	background-color: transparent;
+	background-image: url(../template/standard/dostava.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	left: 30%;
+	top: 190px;
+}
+
+.product-cell .lista .dostava {
+	height: 29px;
+	position: absolute;
+	width: 102px;
+	z-index: 9;
+	background-attachment: scroll;
+	background-color: transparent;
+	background-image: url(../template/standard/dostava.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	left: 20px;
+	top: 140px;
+}
+
+
+
+.product-cell .akcijabadge {
+	height: 65px;
+	position: absolute;
+	width: 64px;
+	z-index: 8;
+	background-attachment: scroll;
+	background-color: transparent;
+	background-image: url(../img/akcijabadge.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	left: 10px;
+	top: 10px;
+}
+
+.product-cell .product .product-info .akcijabadgegrid {
+	height: 65px;
+	position: absolute;
+	width: 64px;
+	z-index: 8;
+	background-attachment: scroll;
+	background-color: transparent;
+	background-image: url(../img/akcijabadge.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	left: 58%;
+	top: -35px;
+}
+
+
+
+
+
+
+
+.discount-product {
+	background-color: #2799d1;
+	border-radius: 35px 35px 35px 35px !important;
+	display: block;
+	font-size: 20px;
+	height: 60px;
+	left: 45px;
+	line-height: 60px;
+	margin-left: -30px;
+	position: absolute;
+	text-align: center;
+	text-decoration: none;
+	top: -20px;
+	width: 60px;
+	z-index: 555;/*	border: #2799d1 3px solid;*/
+	color: #FFF;
+}
+.discount-product:hover {
+	background-color: #2d2d2d;
+}
+
+
+.akcijabadge-product {
+	height: 65px;
+	position: absolute;
+	width: 64px;
+	z-index: 8;
+	background-attachment: scroll;
+	background-color: transparent;
+	background-image: url(../img/akcijabadge.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	left: 25px;
+	top: -20px;
+}
+
+
+
+/******* TIMER ********/
+.product-sale-time {
+	background-color: rgba(2, 33, 87, 0.3);
+	opacity: 0;
+	padding: 10px 0;
+	position: absolute;
+	text-align: center;
+	top: 100px;
+	transition: all 0.2s ease 0s;
+	visibility: hidden;
+	width: 100%;
+	z-index: 50;
+}
+p.time {
+	color: #FFFFFF;
+	font-size: 16px;
+	margin: 0 auto;
+	text-align: left;
+	width: 200px;
+}
+p.time div {
+	background-color: #001539;
+	display: inline-block;
+	margin: 0 2px;
+	padding: 7px 5px 2px;
+	text-align: center;
+	width: 36px;
+	border: #0F0 1px solid;
+}
+.cd-time {
+	display: block;
+	font-family: Arial;
+	font-size: 8px;
+	text-transform: uppercase;
+	color: #FFFFFF;
+}
+/* LIST */
+
+.product-cell .lista {
+/*	display: inline-block;*/
+	margin: 0 auto;
+	overflow: hidden;
+	position: relative;
+/*	width: 100%;*/
+	margin: 0 0px 15px 0;
+	border: #CCC 1px solid;
+	padding: 10px;
+	text-align: left;
+	font-size: 12px;
+}
+.product-cell .lista .product-image {
+/*	float: left;
+	width: 18%;
+	margin-right: 10px;*/
+}
+.product-cell .center-block {
+/*	float: left;
+	width: 46%;*/
+}
+.product-cell .prodinfo {
+	font-weight: 700;
+	font-size: 12px;
+}
+.product-cell .prodinfo span {
+	font-weight: normal;
+}
+.product-cell .prodinfo .instock, .product-cell .prodinfo .outstock {
+	color: inherit;
+}
+
+.product-cell .right-block {
+/*	float: right;
+	width: 32%;*/
+	border-left: #333 0px dotted;
+	padding-left: 20px;
+	margin-left: 10px;
+	/*position: absolute;*/
+/*	top: 10px;*/
+/*	right: 10px;
+	bottom: 10px;*/
+}
+
+.product-cell .lista .product-price {
+	color: #2799d1;
+	font-size: 24px;
+	font-weight: 700;
+	margin: 0;
+	line-height: 30px;
+	padding-bottom: 5px;
+}
+.product-cell .lista .product-price span {font-size: 14px; display: block; clear: both;}
+
+.product-cell .lista .paypalprice {font-size: 12px; margin: 5px 0;}
+.product-cell .lista .paypalprice img {height: 15px;}
+
+.product-cell .lista h4, .product-cell .lista h2 {
+	margin: 7px 0 7px;
+	font-size: 12px;
+	color: #666;
+	height: 62px;
+	overflow: hidden;
+	line-height: 20px;
+}
+.product-cell .lista .opis {
+	max-height: 80px;
+	overflow: hidden;
+}
+.product-cell .lista .productcart {
+	margin-right: 10px;
+	bottom: 0px;
+	left: 10px;
+	position: absolute;
+}
+
+
+
+
+
+.lista .product-shopping-cart {text-align: center; margin-left: 25%; margin-top: 15px;}
+
+.lista .product-shopping-cart .ikona {
+	float: left;
+	line-height: 34px;
+	display: block;
+	width: 50px;
+	background-color: #101c2f;
+	-webkit-transform: skew(-20deg); -moz-transform: skew(-20deg); -o-transform: skew(-20deg);
+	font-size: 24px;
+	text-align: center;
+	text-decoration: none;
+	z-index: 5;/*	border: #2799d1 3px solid;*/
+	padding: 0;
+	margin: 0;
+	color: #FFF;
+}
+
+.lista .product-shopping-cart .kupi {
+	background-color: #2799d1;
+	color: #FFF;
+	font-size: 14px;
+	padding: 0 20px;
+	line-height: 34px;
+	float: left;
+	margin-left: -1px;	
+	-webkit-transform: skew(-20deg); -moz-transform: skew(-20deg); -o-transform: skew(-20deg);
+}
+
+.lista .product-shopping-cart .kupi > * {
+	display: inline-block; webkit-transform: skew(20deg); -moz-transform: skew(20deg); -o-transform: skew(20deg);
+}
+
+.lista .product-shopping-cart:hover .ikona {
+	background-color: #2799d1;
+}
+
+.lista .product-shopping-cart:hover .kupi {
+	background-color: #101c2f;
+}
+
+.lista .product-shopping-cart .ikona i {
+	-webkit-transform: skew(20deg); -moz-transform: skew(20deg); -o-transform: skew(20deg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.product-cell .lista .posaljiupit {
+	right: 0px;
+	margin-right: 0;
+}
+.product-cell .lista .productinfo {
+	margin-right: 0px;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+}
+.product-cell .lista .oldprice {
+	font-size: 13px;
+}
+.product-cell .lista .oldprice span {
+	text-decoration: line-through;
+}
+.product-cell .lista .discount-shopping-cart {
+	background-color: #2799d1;
+	border-radius: 35px 35px 35px 35px !important;
+	display: block;
+	font-size: 20px;
+	height: 60px;
+	left: 35px;
+	line-height: 60px;
+	margin-left: -30px;
+	position: absolute;
+	text-align: center;
+	text-decoration: none;
+	top: 5px;
+	width: 60px;
+	z-index: 5;/*	border: #2799d1 3px solid;*/
+	color: #FFF;
+}
+.product-cell .lista .discount-shopping-cart:hover {
+	background-color: #2d2d2d;
+}
+ @media (min-width: 1025px) {
+.product-cell .right-block {
+
+}
+.product-cell .center-block {
+
+}
+}
+ @media (max-width: 768px) {
+.product-cell .right-block {
+
+}
+.product-cell .center-block {
+
+}
+.product-cell .lista .product-price {font-size: 16px;}
+
+h3.groupon {font-size: 14px; padding-bottom: 30px;}
+}
+ @media only screen and (max-width: 480px) {
+.productcart i, .productinfo i {display: none; }
+.product-cell .right-block {
+
+}
+.product-cell .center-block {
+
+}
+.product-cell .lista .product-image a {
+text-align: center;
+display: block;
+}
+.product-cell .lista .productcart {
+
+}
+.product-cell .lista .product-price {
+
+}
+.product-cell .lista .oldprice {
+
+}
+.product-cell .lista .posaljiupit {
+	margin-right: 160px;
+}
+}
+ @media (min-width: 768px) {
+.product-cell .right-block {
+	top: 10px;
+}
+}

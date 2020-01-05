@@ -1,0 +1,802 @@
+"use strict";
+
+/* global jQuery, abort, xmlhttp, $ */
+
+var WebUrl = $.cookie('VscUrl');
+
+$.extend({
+    getUrlVars: function () {
+        var vars = [],
+            hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    },
+    getUrlVar: function (name) {
+        return $.getUrlVars()[name];
+    }
+});
+
+
+jQuery(document).ready(function ($) {
+$(".single-product a, .lista a, .artikl a, .shop-product a, .breadcrumb-content a, h4 a").each(function(){
+	var el = $(this);
+	el.attr("href", el.attr("href").replace(/[^ -~]+/g, "-"));
+});
+	
+    var WindowsSize=function(){
+        var h=$(window).height(),
+            w=$(window).width();
+        $.cookie("screen_w", w);
+    };
+   $(document).ready(WindowsSize); 
+   $(window).resize(WindowsSize);	
+
+//PAGE PRELOADER
+
+    $(window).load(function() { // makes sure the whole site is loaded
+        $('#status').fadeOut(); // will first fade out the loading animation
+        $('#preloader').delay(350).fadeOut('slow'); // will fade out the white DIV that covers the website.
+        $('body').delay(350).css({'overflow':'visible'});
+    });
+
+}); //END of jQuery
+
+function ProductRating(code, rate, code2, addr) {	
+var url = '';
+$.ajax({ 
+url: WebUrl + 'product-rating.asp?rate=' + rate + '&code=' + code + '&addr=' + addr, 
+type:'POST', 
+dataType: 'html', 
+	success: function(response) {
+		$('.like'+ code2).html(jQuery(response).find('.RatingPuta').html()); 
+	} 
+});
+}
+
+function onProductClick(n) {
+    var t = n.closest(".product-ga"),
+        r = "Pregled kategorije ",
+        i;
+    	ga("ec:addProduct", {
+        id: t.attr("data-id"),
+        name: t.attr("data-name"),
+        category: t.attr("data-category"),
+        brand: t.attr("data-brand"),
+        position: t.attr("data-position"),
+        price: t.attr("data-price"),
+	producturl : t.attr("data-producturl")
+    }), ga("ec:setAction", "click", {
+        list: t.attr("data-list")
+    }), i = !1, ga("send", "event", "Pregled kategorije proizvoda", "click", t.attr("data-list"), {
+        hitCallback: function() {
+            i || (document.location = t.attr("data-producturl"), i = !0)
+        }
+    }), setTimeout(function() {
+        i || (document.location = t.attr("data-producturl"), i = !0)
+    }, 300)
+}
+
+function onCartClick(n) {
+    var t = n.closest(".product-ga"),
+        i;
+    	ga("ec:addProduct", {
+        id: t.attr("data-id"),
+        name: t.attr("data-name"),
+        category: t.attr("data-category"),
+        brand: t.attr("data-brand"),
+        position: t.attr("data-position"),
+        price: t.attr("data-price"),
+	carturl : t.attr("data-carturl")
+    }), ga("ec:setAction", "click", {
+        list: t.attr("data-list")
+    }), i = !1, ga("send", "event", "Pregled kategorije proizvoda", "click", t.attr("data-list"), {
+        hitCallback: function() {
+            i || (document.location = t.attr("data-carturl"), i = !0)
+        }
+    }), setTimeout(function() {
+        i || (document.location = t.attr("data-carturl"), i = !0)
+    }, 300)
+}
+
+jQuery(function () {
+    jQuery(window).scroll(function () {
+        if (jQuery(this).scrollTop() > 100) {
+            jQuery('#top').fadeIn();
+        } else {
+            jQuery('#top').fadeOut();
+        }
+    });
+
+    // scroll body to 0px on click
+    jQuery('#top a').click(function () {
+        jQuery('body,html').stop(false, false).animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    });
+});
+
+
+function updateCart(code, opcije, groupon, cartid, komadnaprodaja) {
+	var q = document.getElementById("q_" + code.toString() + "_" + opcije.toString()).value;
+	var url = "cart.asp?cmd=update&code=" + code.toString() + "&opcije="+opcije.toString()+ "&groupon="+groupon.toString()+"&id="+cartid.toString()+"&q=" + q+"&komadna="+komadnaprodaja;
+	window.location = url;
+}
+
+function deleteCart(id, code) {
+	var url = "cart.asp?cmd=delete&id=" + id.toString() + "&code="+code.toString();
+	window.location = url;
+}
+
+
+
+$(function () {
+
+    var date;
+    var toDate;
+
+    $("div.countdown span").each(function (index) {
+        date = $(this).html();
+
+        var year = date.substring(0, 4);
+        var month = Number(date.substring(4, 6)) - 1;
+        var day = Number(date.substring(6, 8));
+
+        var hour = Number(date.substring(8, 10));
+        var minute = Number(date.substring(10, 12));
+        var second = Number(date.substring(12, 14));
+
+        toDate = new Date(year, month, day, hour, minute, second);
+
+        //$(this).countdown({ until: toDate, format: 'HMS', layout: '<strong>{hnn}</strong><span style="color:#807e7e">h : </span><strong>{mnn}</strong><span style="color:#807e7e">m : </span><strong>{snn}</strong><span style="color:#807e7e">s</span>' });
+        $(this).countdown({
+            until: toDate,
+            format: 'dHMS',
+            layout: '<strong>{dnn}</strong><span style="color:#fff">d </span><strong>{hnn}</strong><span style="color:#fff">h </span><strong>{mnn}</strong><span style="color:#fff">m </span><strong>{snn}</strong><span style="color:#fff">s</span>'
+        });
+        $(this).css("color", "#fff");
+
+    });
+
+});
+
+
+function PostaviCookie(datacookie, data) {
+    $.cookie(datacookie, data, {
+        expires: 7
+    });
+    if ($.browser.msie) {
+        window.location.reload(true);
+    } else {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        var sliderMin = $("#slider").slider("option", "min");
+        var sliderMax = $("#slider").slider("option", "max");
+        $('#FilteriManu').find('#amount').html(sliderMin + ' Kn  -  ' + sliderMax + ' Kn');
+        $('#FilteriManu').find('input[type=checkbox]').attr("checked", false);
+        $("#slider").slider("option", "values", [sliderMin, sliderMax, 10]);
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+    }
+}
+
+
+function FilterWord(dataword, cate, subcate) {
+    var provjera = '';
+    provjera = subcate;
+    dataword = $.trim(dataword);
+
+    if ($.trim(dataword) > '') {
+        if ($.trim(provjera) === '') {
+            $('#ajax-loader').ajaxStart(function () {
+                $(this).show();
+            }).ajaxComplete(function () {
+                $(this).fadeOut();
+            });
+            $.post(WebUrl + 'query-artikli.asp?cate=' + cate + '&filterword=' + dataword + '&ajax=1', {
+                dataword: dataword
+            }, function (data) {
+                result(data);
+            });
+            $.cookie("FilterWord", dataword);
+            $.cookie("FilterCate", cate); /*$("#product-list-wrapper").load(location.href+" #product-list-wrapper>*","");*/
+        } else {
+            $('#ajax-loader').ajaxStart(function () {
+                $(this).show();
+            }).ajaxComplete(function () {
+                $(this).fadeOut();
+            });
+            $.post(WebUrl + 'query-artikli.asp?subcate=' + subcate + '&cate=' + cate + '&filterword=' + dataword + '&ajax=1', {
+                dataword: dataword
+            }, function (data) {
+                result(data);
+            });
+            $.cookie("FilterWord", dataword);
+            $.cookie("FilterCate", subcate); /*$("#product-list-wrapper").load(location.href+" #product-list-wrapper>*","");*/
+        }
+    }
+}
+
+
+function FilterWordTrgovina(dataword, trgovinaid) {
+    dataword = $.trim(dataword);
+
+    if ($.trim(dataword) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'query-cen-artikli.asp?id=' + trgovinaid + '&filterword=' + dataword + '&ajax=1', {
+            dataword: dataword
+        }, function (data) {
+            result(data);
+        });
+        $.cookie("FilterWord", dataword);
+    }
+}
+
+
+
+
+
+
+/* SVI FILTERI BEGIN */
+function FilterSvi(manu, cate, subcate, subf, akcija, novo) {
+    var query_string = '';
+	var query_subf = '';
+	var query_akcija = 3;
+	var query_novo = 0;
+    $("input[type='checkbox'][@name='manuf']:checked",'#formmanu').each(
+
+        function () {
+            if (this.checked) {
+                query_string += "," + this.value;
+            }
+        });
+
+    $("input[type='checkbox'][@name='subf']:checked",'#formsubf').each(
+
+        function () {
+            if (this.checked) {
+                query_subf += "," + this.value;
+            }
+        });
+
+    $("input[type='checkbox'][@name='FilterNovo']:checked",'#fnovo').each(
+
+        function () {
+            if (this.checked) {
+                query_novo = this.value;
+            }
+        });
+		
+    $("input[type='checkbox'][@name='FilterAkcija']:checked",'#fakcija').each(
+
+        function () {
+            if (this.checked) {
+                query_akcija = this.value;
+            }
+        });
+
+    if ($.trim(query_string) === '' && $.trim(query_subf) === '' && $.trim(query_akcija) === '3' && $.trim(query_novo) === '0') {
+        $.cookie('FilterManu', null);
+		$.cookie("FilterAkcija", null);
+		$.cookie("FilterNovo", null);
+        window.location.reload(true);
+    }
+	
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'query-artikli.asp?cate=' + cate + '&man=' + query_string + '&subf=' + query_subf + '&akcija=' + query_akcija + '&novo=' + query_novo + '&ajax=1', {
+         /*   manu: manu */
+        }, function (data) {
+            result(data);
+        });
+        $.cookie("FilterManu", query_string);
+        $.cookie("FilterCate", cate); 
+		$.cookie("FilterAkcija", query_akcija);
+		$.cookie("FilterNovo", query_novo);
+
+}
+/* SVI FILTERI END */
+
+
+
+function FilterAkcijaKate(kate) {
+    var query_string = '';
+    $("input[type='checkbox'][@name='katef']:checked").each(
+
+        function () {
+            if (this.checked) {
+                query_string += "," + this.value;
+            }
+        });
+
+    if ($.trim(query_string) === '') {
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+        abort();
+    }
+    $('#ajax-loader').ajaxStart(function () {
+        $(this).show();
+    }).ajaxComplete(function () {
+        $(this).fadeOut();
+    });
+    $.post(WebUrl + 'query-akcija.asp?id=' + query_string, {
+        kate: kate
+    }, function (data) {
+        result(data);
+    });
+}
+
+
+function FilterIzdvajamoKate(kate) {
+    var query_string = '';
+    $("input[type='checkbox'][@name='katef']:checked").each(
+
+        function () {
+            if (this.checked) {
+                query_string += "," + this.value;
+            }
+        });
+
+    if ($.trim(query_string) === '') {
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+        abort();
+    }
+    $('#ajax-loader').ajaxStart(function () {
+        $(this).show();
+    }).ajaxComplete(function () {
+        $(this).fadeOut();
+    });
+    $.post(WebUrl + 'query-izdvajamo.asp?id=' + query_string, {
+        kate: kate
+    }, function (data) {
+        result(data);
+    });
+}
+
+
+function FilterWhatsNewKate(kate, top) {
+    var query_string = '';
+    $("input[type='checkbox'][@name='katefnovo']:checked").each(
+
+        function () {
+            if (this.checked) {
+                query_string += "," + this.value;
+            }
+        });
+		
+    /*$('#status-msg').fadeIn().html(WebUrl + 'query-whatsnew.asp?kate=' + query_string).delay(5500).fadeOut(); */
+    if ($.trim(query_string) === '') {
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+        abort();
+    }
+    $('#ajax-loader').ajaxStart(function () {
+        $(this).show();
+    }).ajaxComplete(function () {
+        $(this).fadeOut();
+    });
+    $.post(WebUrl + 'query-whatsnew.asp?id=' + query_string, {
+        kate: kate
+    }, function (data) {
+        result(data);
+    });
+}
+
+
+
+
+function FilterManufactureKate(kate, manu) {
+    var query_string = '';
+    $("input[type='checkbox'][name='katef']:checked").each(
+
+        function () {
+            if (this.checked) {
+                query_string += "," + this.value;
+            }
+        });
+    if ($.trim(query_string) === '') {
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+        abort();
+    }
+    $('#ajax-loader').ajaxStart(function () {
+        $(this).show();
+    }).ajaxComplete(function () {
+        $(this).fadeOut();
+    });
+
+    $.post(WebUrl + 'query-artikli.asp?man=' + manu + '&id=' + query_string, {
+        kate: kate
+    }, function (data) {
+        result(data);
+    });
+}
+
+
+
+
+
+
+
+
+function FilterAkcijaTrgovina(akcija, trgovinaid) {
+
+    akcija = $.trim(akcija);
+    if ($('#FilterAkcija').is(':checked')) {
+
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.cookie("FilterAkcija", akcija);
+        $.post(WebUrl + 'query-cen-artikli.asp?id=' + trgovinaid + '&akcija=' + akcija + '&ajax=1', {
+            akcija: akcija
+        }, function (data) {
+            result(data);
+        });
+    } else {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.cookie("FilterAkcija", null);
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+        abort();
+    }
+}
+
+function FilterNovoTrgovina(novo, trgovinaid) {
+
+    novo = $.trim(novo);
+    if ($('#FilterNovo').is(':checked')) {
+
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.cookie("FilterNovo", novo);
+        $.post(WebUrl + 'query-cen-artikli.asp?id=' + trgovinaid + '&novo=' + novo + '&ajax=1', {
+            novo: novo
+        }, function (data) {
+            result(data);
+        });
+    } else {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.cookie("FilterNovo", null);
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+        abort();
+    }
+}
+
+function FilterSubLevel(manu, level) {
+    var query_string = '';
+    $("input[type='checkbox'][@name='manuf']:checked").each(
+
+        function () {
+            if (this.checked) {
+                query_string += "," + this.value;
+            }
+        });
+    if ($.trim(query_string) === '') {
+        $.cookie('FilterManu', null);
+        $("#product-list-wrapper").load(location.href + " #product-list-wrapper>*", "");
+    /*    abort(); */
+    }
+    $('#ajax-loader').ajaxStart(function () {
+        $(this).show();
+    }).ajaxComplete(function () {
+        $(this).fadeOut();
+    });
+
+    $.cookie("FilterManu", query_string);
+    $.cookie("FilterCate", level);
+    $.post(WebUrl + 'query-artikli-level.asp?level=' + level + '&man=' + query_string + '&ajax=1', {
+        level: level
+    }, function (data) {
+        result(data);
+    });
+}
+
+
+function FilterWordLevel(dataword, level) {
+  	var cate;
+    dataword = $.trim(dataword);
+    if ($.trim(dataword) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'query-artikli-level.asp?level=' + level + '&filterword=' + dataword + '&ajax=1', {
+            dataword: dataword
+        }, function (data) {
+            result(data);
+        }); /*$('#status-msg').fadeIn().html(WebUrl + 'query-artikli-level.asp?level='+level+'&filterword=' + dataword + '&ajax=1').delay(5500).fadeOut();*/
+        $.cookie("FilterWord", dataword);
+        $.cookie("FilterCate", cate);
+    }
+}
+
+
+
+
+function DodajCompare(str, code) {
+    $.post(WebUrl + 'compare-ajax.asp?code=' + str);
+    $(".popiscompare").load(location.href + " .popiscompare>*", "");
+    $(".popiscomparegrupe").load(location.href + " .popiscomparegrupe>*", "");
+	$("#comp"+code).removeClass("el el-check-empty");
+	$("#comp"+code).addClass("el el-check");	
+}
+
+function ObrisiCompare(str, id) {
+    $.post(WebUrl + 'compare-delete.asp?del=' + str + '&id=' + id);    
+    $(".popiscomparegrupe").load(location.href + " .popiscomparegrupe>*", "");
+	$(".popiscompare").load(location.href + " .popiscompare>*", "");	
+	$("#comp"+str).removeClass("el el-check");	
+	$("#comp"+str).addClass("el el-check-empty");
+}
+
+
+
+function DodajWishlist(str, display) {
+	$("#message").addClass("alert-success");
+    $('#message').html('Dodali ste <span>' + display + '</span> u listu želja!').slideToggle('fast', function () {
+        $('#message').delay(2000).slideToggle("fast");
+    });
+    $.post(WebUrl + 'wishlist-add.asp?code=' + str);	
+	$("#wish"+str).removeClass("el el-star-empty");
+	$("#wish"+str).addClass("el el-star");	
+}
+
+function ObrisiWishlist(str, display) {
+	$("#message").addClass("alert-danger");
+    $('#message').html('Obrisali ste <span>' + display + '</span> iz liste želja!').slideToggle('fast', function () {
+        $('#message').delay(2000).slideToggle("fast");
+    });
+    $.post(WebUrl + 'wishlist-delete.asp?code=' + str);
+	$("#wish"+str).removeClass("el el-star");
+	$("#wish"+str).addClass("el el-star-empty");
+}
+
+
+
+function DodajFavorites(str, display, stranicaartikla) {
+	$("#message").addClass("alert-success");
+    $('#message').html('Dodali ste <span>' + display + '</span> u favorite!').slideToggle('fast', function () {
+        $("#favorites").load(location.href + "&t=" + 1 * new Date() + " #favorites>*", "");
+        $('#message').delay(2000).slideToggle("fast");
+    });
+    $.post(WebUrl + 'favorites-add.asp?code=' + str);	
+	$(".popisfavorite").load(location.href + " .popisfavorite>*", "");
+	$("#fav"+str).removeClass("el el-heart-empty");
+	$("#fav"+str).addClass("el el-heart");	
+
+}
+
+function ObrisiFavorites(str, display) {
+	$("#message").addClass("alert-danger");
+    $('#message').html('Obrisali ste <span>' + display + '</span> iz favorita!').slideToggle('fast', function () {
+        $("#favorites").load(location.href + "&t=" + 1 * new Date() + " #favorites>*", "");
+        $('#message').delay(2000).slideToggle("fast");
+    });
+    $.post(WebUrl + 'favorites-delete.asp?code=' + str);
+	$(".popisfavorite").load(location.href + " .popisfavorite>*", "");	
+	$("#fav"+str).removeClass("el el-heart");
+	$("#fav"+str).addClass("el el-heart-empty");
+}
+
+
+function ProvjeraKorisnika(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.get(WebUrl + 'account-check.asp?username=' + code, {
+            code: code
+        }, function (data) {
+            resultrate(data);
+		/*	 alert(data);*/
+			document.getElementById("UserError").innerHTML= data;
+        });
+
+    }
+}
+
+
+function ProvjeraEmail(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.get(WebUrl + 'account-email.asp?email=' + code, {
+            code: code
+        }, function (data) {
+            resultrate(data);
+		/*	 alert(data);*/
+			document.getElementById("EmailError").innerHTML= data;
+        });
+
+    }
+}
+
+
+
+function ProvjeriGiftCard(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'giftcard-check.asp?card=' + code, {
+            code: code
+        }, function (data) {
+            resultrate(data);
+            document.giftcard.submit();
+        });
+
+    }
+}
+
+
+function ProvjeriBon(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'bon-check.asp?bon=' + code, {
+            code: code
+        }, function (data) {
+            resultrate(data);
+            document.bonovi.submit();
+        });
+
+    }
+}
+
+
+function ProvjeriUserPoints(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'points-check.asp?points=' + code, {
+            code: code
+        }, function (data) {
+            resultrate(data);
+            document.userpoints.submit();
+        });
+
+    }
+}
+
+
+function FilterKartice(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.cookie("BrojKartice", code, {path: '/'});
+		$.cookie("BrojRata", "0", {path: '/'});
+        $.post(WebUrl + 'query-kartice.asp?karticaid=' + code, {
+            code: code
+        }, function (data) {
+            resultrate(data);
+
+        });
+    }
+}
+
+
+function FilterKarticeOpis(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'query-kartice-opis.asp?karticaid=' + code, {
+            code: code
+        }, function (data) {
+            resultopis(data);
+        });
+			/*	$("#KarticeOpis").load(location.href + " #KarticeOpis>*", "");	*/
+    }
+}
+
+
+function resultrate(data) {
+    $('#BrojRata').html(data);
+	$('#resultiznos').html('');
+}
+
+function resultopis(data) {
+    $('#KarticeOpis').html(data);
+}
+
+
+function FilterRata(code) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+/*        $.cookie("BrojRata", code); */
+		$.cookie("BrojRata", code, {path: '/'});
+
+		
+    }
+}
+
+function FilterRataIznos(code, karticaid, iznos) {
+    code = $.trim(code);
+    if ($.trim(code) > '') {
+        $('#ajax-loader').ajaxStart(function () {
+            $(this).show();
+        }).ajaxComplete(function () {
+            $(this).fadeOut();
+        });
+        $.post(WebUrl + 'query-kartice-iznos.asp?kartica=' + karticaid + '&brojrata=' + code + '&iznos=' + iznos, {
+            code: code
+        }, function (data) {
+            resultiznos(data);
+        });
+		$.cookie("BrojRata", code, {path: '/'});
+			/*	$("#KarticeOpis").load(location.href + " #KarticeOpis>*", "");	*/
+    }
+}
+
+
+function resultiznos(data) {
+    $('#resultiznos').html(data);
+}
+
+
+function result(data) {
+    $('#product-list-wrapper').html(data);
+}
+
+$(function () {
+    $('#ajax-loader').ajaxStart(function () {
+        $(this).show();
+    }).ajaxComplete(function () {
+        $(this).fadeOut();
+    });
+});

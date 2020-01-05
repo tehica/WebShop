@@ -1,0 +1,72 @@
+(function($) {
+    "use strict";
+
+    var menu = $('.menu').clone(true).removeClass('menu').addClass('responsive-nav'),
+        container = $('#responsive-nav');
+
+    container.append(menu);
+
+
+    container.find('li, .col-2, .col-3, .col-4, .col-5').each(function() {
+
+        var $this = $(this);
+
+        if ($this.hasClass('mega-menu-container')) {
+            $this.removeClass('mega-menu-container');
+        }
+        $this.has('ul, .megamenu').prepend('<span class="menu-button"></span>');
+    });
+
+
+    $('span.menu-button').on('click', function() {
+        var $this = $(this);
+
+        if (!$this.hasClass('active')) {
+            $(this)
+                .addClass('active')
+                .siblings('ul, .mega-menu')
+                .slideDown('800');
+        } else {
+            $(this)
+                .removeClass('active')
+                .siblings('ul, .mega-menu')
+                .slideUp('800');
+        }
+    });
+
+    $('#responsive-nav-button').on('click', function() {
+        var $this = $(this);
+
+        if ($this.hasClass('active')) {
+            $('#responsive-nav').find('.responsive-nav').slideUp(300, function() {
+                $this.removeClass('active');
+            });
+
+        } else {
+            $('#responsive-nav').find('.responsive-nav').slideDown(300, function() {
+                $this.addClass('active');
+            });
+        }
+    });
+
+    // Sub menu show/hide with hoverIntent plugin
+    if ($.fn.hoverIntent) {
+        $('ul.menu').hoverIntent(function() {
+                $(this).children('ul, .mega-menu').fadeIn(100);
+
+            }, function() {
+                $(this).children('ul, .mega-menu').fadeOut(50);
+            },
+            'li');
+
+    } else {
+
+        $('ul.menu').find('li').mouseover(function() {
+            $(this).children('ul, .mega-menu').css('display', 'block');
+
+        }).mouseout(function() {
+            $(this).children('ul, .mega-menu').css('display', 'none');
+        });
+    }
+
+}(jQuery));
